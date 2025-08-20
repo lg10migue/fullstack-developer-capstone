@@ -1,12 +1,9 @@
 import json
 import logging
-from datetime import datetime
 
-from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import CarMake, CarModel
@@ -91,11 +88,14 @@ def get_cars(request):
     car_models = CarModel.objects.select_related("car_make")
     cars = []
     for car_model in car_models:
-        cars.append({"CarModel": car_model.name, "CarMake": car_model.car_make.name})
+        cars.append(
+            {"CarModel": car_model.name, "CarMake": car_model.car_make.name}
+        )
     return JsonResponse({"CarModels": cars})
 
 
-# Update the `get_dealerships` render list of dealerships all by default, particular state if state is passed.
+# Update the `get_dealerships` render list of dealerships all by default
+# particular state if state is passed.
 def get_dealerships(request, state="All"):
     if state == "All":
         endpoint = "/fetchDealers"
@@ -134,11 +134,15 @@ def add_review(request):
     if request.user.is_anonymous is False:
         data = json.loads(request.body)
         try:
-            _response = post_review(data)
+            post_review(data)
             return JsonResponse({"status": 200})
         except Exception as e:
             return JsonResponse(
-                {"status": 401, "message": "Error in posting review", "error": str(e)}
+                {
+                    "status": 401,
+                    "message": "Error in posting review",
+                    "error": str(e),
+                }
             )
     else:
         return JsonResponse({"status": 403, "message": "Unauthorized"})
