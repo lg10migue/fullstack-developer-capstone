@@ -34,4 +34,10 @@ urlpatterns = [
     ),
     # Path for add a review view.
     path(route="add_review", view=views.add_review, name="add_review"),
+    # Path for get inventory view.
+    path(
+        route="get_inventory/<int:dealer_id>",
+        view=views.get_inventory,
+        name="get_inventory",
+    ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
